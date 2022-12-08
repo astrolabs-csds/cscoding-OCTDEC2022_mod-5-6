@@ -3,8 +3,8 @@ const router = express.Router();
 
 const UserModel = require('../models/UserModel.js');
 
-// http://localhost:3001/users/registration
-router.post('/registration',
+// http://localhost:3001/users/register
+router.post('/register',
     function(req, res) {
         
         let newDocument = {
@@ -19,7 +19,12 @@ router.post('/registration',
         // If MongoDB creates document succesfully, then...
         .then(
             function(dbDocument) {
-                res.json(dbDocument)
+                res.json(
+                    {
+                        "status": "ok",
+                        "message": dbDocument
+                    }
+                )
             }
         )
         // Otherwise, if error occurs catch it...

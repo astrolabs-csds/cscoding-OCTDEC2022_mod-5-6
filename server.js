@@ -2,6 +2,8 @@ const express = require('express');
 const server = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose'); 
+const cors = require('cors');
+const expressFormData = require('express-form-data');
 require('dotenv').config();
 
 const usersRoutes = require('./routes/users-routes.js');
@@ -10,7 +12,8 @@ const productsRoutes = require('./routes/products-routes.js');
 // Configure middleware for express
 server.use( bodyParser.urlencoded( {extended: false} ) );
 server.use( bodyParser.json() );
-
+server.use(cors());
+server.use(expressFormData.parse());
 
 const dbURL = process.env.DB_URL;
 
