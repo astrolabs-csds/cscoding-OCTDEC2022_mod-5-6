@@ -21,6 +21,7 @@ const jwtSecret = process.env.JWT_SECRET
 
 
 const UserModel = require('../models/UserModel.js');
+const passport = require('passport');
 
 // http://localhost:3001/users/register
 router.post( '/register',
@@ -259,11 +260,10 @@ router.post('/login',
 
 // http://localhost:3001/users/find
 router.post('/find',
+    passport.authenticate('jwt', {session: false}),
     function(req, res) {
         UserModel
-        .find(
-           // { "firstName": req.body.firstName }
-        )
+        .findById(req.user.id)
         .then(
             function(dbDocument) {
                 res.json(dbDocument)
@@ -285,6 +285,7 @@ router.post('/find',
 // http://localhost:3001/users/update
 router.put(
     '/update',
+    // passport.authenticate('jwt', {session: false}),
     function(req, res) {
 
         let updates = {}

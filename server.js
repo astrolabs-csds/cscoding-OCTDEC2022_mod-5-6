@@ -6,6 +6,7 @@ const cors = require('cors');
 const expressFormData = require('express-form-data');
 require('dotenv').config();
 
+const UserModel = require('./models/UserModel.js');
 const usersRoutes = require('./routes/users-routes.js');
 const productsRoutes = require('./routes/products-routes.js');
 
@@ -71,7 +72,7 @@ const passportJwt = (passport) => {
         )
     )
 };
-passportJwt(passport)
+passportJwt(passport);
 
 
 // Import and configure Cloudinary
@@ -125,7 +126,10 @@ server.get('/',
 
 
 // http://localhost:3001/users/
-server.use('/users', usersRoutes);
+server.use(
+    '/users', 
+    usersRoutes
+);
 
 // http://localhost:3001/products/
 server.use('/products', productsRoutes);
