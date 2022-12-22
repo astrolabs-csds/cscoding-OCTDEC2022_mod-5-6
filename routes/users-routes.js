@@ -286,7 +286,7 @@ router.post('/find',
 router.put(
     '/update',
     // passport.authenticate('jwt', {session: false}),
-    function(req, res) {
+    async function(req, res) {
 
         let updates = {}
 
@@ -299,6 +299,54 @@ router.put(
         if (req.body.phone) {
             updates['phone'] = req.body.phone;
         };
+
+        if (req.body.password) {
+            bcryptjs.genSalt(
+
+                function(bcryptError, theSalt) {
+                // Use the (a) and (b) salt user's password 
+                // and produce hashed password
+                    bcryptjs.hash( 
+                        req.body.password,                  // first ingredient
+                        theSalt,                            // second ingredient
+                        function(hashError, theHash) {      // the hash
+                            // Reassign the original password formData
+                            updates['password'] = theHash;
+
+                        }
+                    )
+                }
+            )
+        };
+
+
+        // If avatar file is included...
+        if( Object.values(req.files).length > 0 ) {
+
+            const files = Object.values(req.files);
+            
+            
+            // upload to Cloudinary
+            await cloudinary.uploader.upload(
+                files[0].path,
+                (cloudinaryErr, cloudinaryResult) => {
+                    if(cloudinaryErr) {
+                        console.log(cloudinaryErr);
+                        res.json(
+                            {
+                                status: "not ok",
+                                message: "Error occured during image upload"
+                            }
+                        )
+                    } else {
+                        // Include the image url in updates
+                        updates.avatar = cloudinaryResult.url;
+                        console.log('updates.avatar', updates.avatar)
+                    }
+                }
+            )
+        };
+
 
         UserModel
         .findOneAndUpdate(
